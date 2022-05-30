@@ -240,7 +240,7 @@ function drawFemaleBodyView(data, className, divName, width, height, margin)
                     return g_exprValColorMap(+g_tpmFullData[g_selectedRow].PalmSole);
                 else
                     return g_exprValColorMap(0); })
-            .style("opacity", "0.5")
+            .style("opacity", "1")
             .attr("transform", "translate(" + horAdj + "," + 0 + ")");
 
             var bodyPart1_3 = nodePartSilhouette
@@ -2255,7 +2255,8 @@ function exprValColormap(){
     .domain([0,3,6,11,26,51,101,501,1000000])
     // .range( d3.schemeYlOrRd[9]);
     // .range(d3.schemeTableau10)
-    .range(d3.schemeSet3)
+    // .range(d3.schemeSet3)
+    .range(d3.schemeOranges[9])
     return colormap;
 }
 
