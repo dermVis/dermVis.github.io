@@ -166,6 +166,11 @@ function drawFemaleBodyView(data, className, divName, width, height, margin)
       .attr("text-anchor", "left")
       .style("alignment-baseline", "middle")
 
+      svg.append("g").append("text")
+        .attr("class", "legendTitle")
+        .attr("x", function() {return (width+svgHorAdj)-45;})
+        .attr("y", function() {return 20+8*25;})
+        .text("TPM range")  ;
 
     // Draw parts
     // Warning: All body parts are transformed to correct positions with hard coded transformation information
@@ -1083,6 +1088,7 @@ function drawDotplots(data, subjectInfoData, className, divName, width, height, 
   
     if (isPalmSoleOnly)
         x.domain(['PalmSole']);
+        // x.domain(subgroups);
     else
         x.domain(namegroups);
 
@@ -1091,16 +1097,35 @@ function drawDotplots(data, subjectInfoData, className, divName, width, height, 
         .call(d3.axisBottom(x).tickFormat(function(d,i){
             if(g_isEnglish)
             {
-               return d;
+                if(zIsPalmSoleOnly)
+                {
+                    for(var i = 0; i < subgroups.length; i++)
+                    {
+                        if(d === subgroups[i])
+                            return subgroups[i];
+                    }
+                }
+                else
+                   return d;
             }
             else
             {
-                for(var i = 0; i < g_posTranslate.length; i++){
-                    if(d === g_posTranslate[i].en)
+                if(zIsPalmSoleOnly)
+                {
+                    for(var i = 0; i < subgroups.length; i++)
                     {
-                          return g_posTranslate[i].cn;
+                        if(d === subgroups[i])
+                            return subgroups[i];
                     }
-                } 
+                }
+                else{
+                    for(var i = 0; i < g_posTranslate.length; i++){
+                        if(d === g_posTranslate[i].en)
+                        {
+                              return g_posTranslate[i].cn;
+                        }
+                    } 
+                }
             }
         }
         ))
@@ -1108,8 +1133,26 @@ function drawDotplots(data, subjectInfoData, className, divName, width, height, 
         //  .attr("transform", "translate(10,0)")
         .style("text-anchor", "center");
 
-
-
+    // labels of axes
+    // y-axis
+     svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0-margin.left-2)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("TPM");
+    // x-axis
+    svg.append("text")
+        .attr("transform", "translate(" + (width-40) + " ," + (height + margin.bottom - 30) + ")")
+        .style("text-anchor", "middle")
+        .text(function(){
+            if(zIsPalmSoleOnly)
+                return g_isEnglish?"Age Groups":"年龄组";
+            else
+                return g_isEnglish?"Regions":"区域";
+            // "Date"
+        });
     // Another scale for subgroup position?
     // var subgroups = ['F', 'M'];
     // var subgroups = ['0_10','11_20','21_30','31_40','41_50','51_60','61_70','over70'];
@@ -1439,12 +1482,40 @@ function drawDotplots(data, subjectInfoData, className, divName, width, height, 
         .attr("x", width - 30)
         .attr("y", function (d, i) { return 20 + i * 25; }) // 100 is where the first dot appears. 25 is the distance between dots
         // .style("fill", function (d,i) { return gDefaultColRange(i); })
-        .text(function (d) {
-            return d;
+        .text(function (d) { 
+            if (g_isEnglish) {
+                if (d == "F")
+                    return "Female";
+                else if (d == "M")
+                    return "Male";
+                else
+                    return d;
+            }
+            else {
+                if (d == "F")
+                    return "女性";
+                else if (d == "M")
+                    return "男性";
+                else
+                    return d;
+            }
         })
         .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle")
+        .style("alignment-baseline", "middle");
+
+    svg.append("g").append("text")
+        .attr("class", "legendTitle")
+        .attr("x", function () { return width - 65; })
+        .attr("y", function () { return 5; })
+        .text(function(){
+            if(zIsPalmSoleOnly)
+
+                return g_isEnglish?"Age Group": "年龄组";
+            else
+                return g_isEnglish?"Sex":"性别";
+        });
 }
+
 
 function drawLinechart(data, subjectInfoData, className, divName, width, height, margin, zsubgroups=['F','M'],zisLog = true)
 {
@@ -1689,7 +1760,30 @@ function drawLinechart(data, subjectInfoData, className, divName, width, height,
         return d;
     })
     .attr("text-anchor", "left")
-    .style("alignment-baseline", "middle")
+    .style("alignment-baseline", "middle");
+
+    svg.append("g").append("text")
+        .attr("class", "legendTitle")
+        .attr("x", function () { return width - 70; })
+        .attr("y", function () { return 5; })
+        .text(function(){
+            return g_isEnglish?"Region":"区域";
+        });
+        // labels of axes
+    // y-axis
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left - 2)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("TPM");
+    // x-axis
+    svg.append("text")
+        .attr("transform", "translate(" + (width) + " ," + (height + margin.bottom-30) + ")")
+        .style("text-anchor", "middle")
+        .text(function(){return g_isEnglish?"Age":"年龄";});
+
 }
 
 function regEquationToCurve(name, data, regEq)
@@ -2438,7 +2532,9 @@ function rnaViewerMain()
 
                         progText.text(function(){return "数据读取中" +"...";})
                         // progText.text(function(){return "<p>数据读取时间较长，请稍等.</p><p>请不要关闭窗口!</p>" +"..." ;})
-                        var infoText = "数据读取时间较长，请稍等. 此次读取后再次搜索将无需再次缓冲. \n 请不要关闭窗口! 若浏览器提示页面未响应，请选择‘等待’. \n 数据读取跳转新页面后不要刷新窗口! ";
+                        var infoText = "数据读取时间较长，请稍等. 此次读取后再次搜索将无需再次缓冲. \n请不要关闭窗口! 若浏览器提示页面未响应，请选择‘等待’. \n数据读取跳转新页面后不要刷新窗口! \n"
+                        infoText += "Loading data…\nData loading may take a long time but is required only once. \nPlease do not close the window. If your browser says 'no response', please choose 'wait'.\n";
+                        infoText += "Do not refresh the web page after data loading is finished.";
                         progText.selectAll("tspan.text")
                             .data(d => infoText.split("\n"))
                             .enter()
