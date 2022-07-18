@@ -43,7 +43,7 @@ var g_posTranslate = [
     {"cn":"头颈",
      "en":"HeadNeck"},
      {"cn":"躯干+四肢",
-     "en":"TrunkExtremities"},
+     "en":"Extremities"},
      {"cn":"掌跖",
      "en":"PalmSole"},
      {"cn":"躯干",

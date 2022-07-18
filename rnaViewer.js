@@ -1106,7 +1106,12 @@ function drawDotplots(data, subjectInfoData, className, divName, width, height, 
                     }
                 }
                 else
-                   return d;
+                {
+                    if(d === "Extremities")
+                        return "TrunkExtremities";
+                    else
+                        return d;
+                }
             }
             else
             {
