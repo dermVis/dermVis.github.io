@@ -2428,8 +2428,8 @@ function rnaViewerMain()
 
       var progsvg = d3.select('.progress')
 		.append('svg')
-		.attr('height', 400)
-		.attr('width', 600);
+		.attr('height', 600)
+		.attr('width', 1000);
 
 	var states = ['started', 'inProgress', 'completed'],
 	    segmentWidth = 100,
@@ -2535,10 +2535,10 @@ function rnaViewerMain()
                                 return (loadProgress) * 3 * segmentWidth; // the multiplier 3 makes the complete width of the progress bar
                             });
 
-                        progText.text(function(){return "数据读取中" +"...";})
+                        progText.text(function(){return "数据读取中" +"...Loading data...";})
                         // progText.text(function(){return "<p>数据读取时间较长，请稍等.</p><p>请不要关闭窗口!</p>" +"..." ;})
                         var infoText = "数据读取时间较长，请稍等. 此次读取后再次搜索将无需再次缓冲. \n请不要关闭窗口! 若浏览器提示页面未响应，请选择‘等待’. \n数据读取跳转新页面后不要刷新窗口! \n"
-                        infoText += "Loading data…\nData loading may take a long time but is required only once. \nPlease do not close the window. If your browser says 'no response', please choose 'wait'.\n";
+                        infoText += "Data loading may take a long time but is required only once. \nPlease do not close the window. If your browser says 'no response', please choose 'wait'.\n";
                         infoText += "Do not refresh the web page after data loading is finished.";
                         progText.selectAll("tspan.text")
                             .data(d => infoText.split("\n"))
